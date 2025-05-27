@@ -1,0 +1,36 @@
+WORKING
+1. Setup WebDriver
+
+To kick things off, I used the `selenium` library along with `webdriver-manager` to handle all the browser automation magic. One thing I love about `webdriver-manager` is that it 
+saves us from the hassle of manually downloading the ChromeDriver—we just plug and play! I ran the browser in headless mode (no GUI window), which is super handy when you just want
+results without opening actual browser tabs on your screen.
+
+2. Navigate to Project List
+
+Once the driver was up and running, I navigated to the target page: [Odisha RERA Projects List](https://rera.odisha.gov.in/projects/project-list). To make sure all content
+was fully loaded (because sometimes the DOM can take a moment), I added a short `time.sleep()` delay. It’s not the most elegant approach, but it’s reliable and perfect for 
+quick-and-dirty testing.
+
+3. Collect "View Details" Links
+
+Next, I hunted down the first six project entries by locating all the anchor (`<a>`) tags containing the text **"View Details"**. These are basically the doors to each 
+project's detail page. I sliced out just the first 6 because that’s what the assignment asked for—and also, let’s be real, scraping 100+ entries without pagination handling 
+can get messy fast! I grabbed the `href` values to programmatically open each project in its own tab.
+
+4. Scrape Project Details
+
+With each link in hand, I opened the project detail page in a new browser tab (because I didn’t want to lose my spot on the main page). I then used `BeautifulSoup` to 
+parse the HTML and dug out two important pieces of information: **RERA Regd. No** and **Project Name**. These values were tucked inside `strong` tags, and I used sibling searching
+to grab the text next to them. I wrapped everything in `try-except` blocks—just in case a project page had missing or funky formatting.
+
+5. Scrape Promoter Details
+
+This part was a little more interactive. I clicked on the **"Promoter Details"** tab using Selenium’s element selectors. After a quick wait for the tab to load, I used 
+BeautifulSoup again to extract three more critical fields: **Company Name**, **Registered Office Address**, and **GST Number**. These details were also hidden behind 
+`strong` tags, so the structure was consistent and easy to navigate once I found the right anchors.
+
+6. Store and Export
+
+Finally, I bundled all the collected data into a list of dictionaries. Each dictionary represented one project and its associated details. I used Python’s built-in 
+`csv` module to export everything to a clean, readable CSV file (`rera_projects.csv`). This format is perfect for further analysis, sharing with mentors, or even loading
+into Pandas later for advanced data wrangling.
